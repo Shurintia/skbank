@@ -1,0 +1,315 @@
+on script load:
+    skriptYenile("mesajlar", "config")
+
+function skriptYenile(m: text, c: text):
+    {_m} is "mesajlar":
+        load yaml "plugins/SkBank/mesajlar.yml" as "SkBank/Mesajlar"
+        set the header of "SkBank/Mesajlar" to "Buradan bütün banka mesajlarını değiştirebilirsiniz, kod başlıklarını ellemeyin." and "{prefix} = Prefix, {player} = Oyuncu adı, {bakiye} = Oyuncu bakiyesi, {tecrube} = Oyuncu tecrübe puanı" and "{seviye} = Oyuncu banka seviyesi, {yeni-sira} = Yeni sıra."
+        if yaml node "Prefix" in "SkBank/Mesajlar" doesn't have value:
+            set yaml value "Prefix" in "SkBank/Mesajlar" to "&7[&aBanka&7]"
+        if yaml node "Islem-Mesajlari" in "SkBank/Mesajlar" doesn't have value:
+            set yaml value "Islem-Mesajlari.Banka-Dolu" in "SkBank/Mesajlar" to "&eBu işlem banka haznenizi aşıyor, seviye atlatın."
+            set yaml value "Islem-Mesajlari.Bakiye-Veya-Para-Yetersiz" in "SkBank/Mesajlar" to "&eBu işlem için bakiye veya paranız yetmiyor."
+            set yaml value "Islem-Mesajlari.Seviye-Atlandi" in "SkBank/Mesajlar" to "&eBaşarıyla seviye atladınız!{yeni-sira}{prefix} &eYeni seviyeniz: &7{seviye}"
+            set yaml value "Islem-Mesajlari.Tecrube-Cekildi" in "SkBank/Mesajlar" to "&eBaşarıyla 500 tecrübe çekildi."
+            set yaml value "Islem-Mesajlari.Tecrube-Yetersiz" in "SkBank/Mesajlar" to "&eBu işlem için 500 tecrübe gerekir."
+            set yaml value "Islem-Mesajlari.Tecrube-Yatirildi" in "SkBank/Mesajlar" to "&eBaşarıyla 500 tecrübe yatırıldı."
+            set yaml value "Islem-Mesajlari.Islem-Basarili" in "SkBank/Mesajlar" to "&eIşlem başarılı."
+        if yaml node "Durum-Mesajlari" in "SkBank/Mesajlar" doesn't have value:
+            set yaml value "Durum-Mesajlari.Cikis-Yapildi" in "SkBank/Mesajlar" to "&eÇıkış yapıldı."
+            set yaml value "Durum-Mesajlari.Cikis-Yapiniz" in "SkBank/Mesajlar" to "&eBu işlem için çıkış yapmalısınız."
+            set yaml value "Durum-Mesajlari.Giris-Yapiniz" in "SkBank/Mesajlar" to "&eBu işlem için giriş yapmalısınız."
+            set yaml value "Durum-Mesajlari.Giris-Yapilmis" in "SkBank/Mesajlar" to "&eGiriş yapılmış."
+            set yaml value "Durum-Mesajlari.Isim-Girin" in "SkBank/Mesajlar" to "&eLütfen bir isim girin."
+            set yaml value "Durum-Mesajlari.Oyuncu-Bilgisi" in "SkBank/Mesajlar" to "&e{player} bakiyesi: &f{bakiye} TL{yeni-sira}{prefix} &e{player} seviyesi: &f{seviye}"
+            set yaml value "Durum-Mesajlari.Siralama-Kapatilmis" in "SkBank/Mesajlar" to "&eBu sıralama yöneticiler tarafından kapatılmış."
+            set yaml value "Durum-Mesajlari.Yetkiniz-Yok" in "SkBank/Mesajlar" to "&eBu işlem için yetkiniz yok."
+        if yaml node "Sifre-Mesajlari" in "SkBank/Mesajlar" doesn't have value:
+            set yaml value "Sifre-Mesajlari.Kilit-Acildi" in "SkBank/Mesajlar" to "&eBanka kilidi açıldı."
+            set yaml value "Sifre-Mesajlari.Sifre-Ayarlandi" in "SkBank/Mesajlar" to "&eŞifre başarıyla ayarlandı."
+            set yaml value "Sifre-Mesajlari.Sifre-Girilmemis-Veya-Ayni" in "SkBank/Mesajlar" to "&eŞifre girilmemiş veya girilen şifre eskisi ile aynı."
+            set yaml value "Sifre-Mesajlari.Sifre-Degistirildi" in "SkBank/Mesajlar" to "&eŞifre değiştirildi, yeniden giriş yapın."
+            set yaml value "Sifre-Mesajlari.Sifre-Girilmemis-Veya-Hatali" in "SkBank/Mesajlar" to "&eŞifre girilmemiş veya hatalı."
+            set yaml value "Sifre-Mesajlari.Sifre-Koyunuz" in "SkBank/Mesajlar" to "&eÖncelikli olarak bir şifre koyun, &a/banka."
+            set yaml value "Sifre-Mesajlari.Sifreniz-Var" in "SkBank/Mesajlar" to "&eBir şifreniz var, kaldırmak için &a/banka şifre"
+            set yaml value "Sifre-Mesajlari.Yeni-Sifre-Gir" in "SkBank/Mesajlar" to "&eKullanacak olduğunuz yeni şifrenizi girin."
+        set the comments of yaml node "Islem-Mesajlari" from "SkBank/Mesajlar" to "İşlem sırasında bu mesajlar gönderilir."
+        set the comments of yaml node "Durum-Mesajlari" from "SkBank/Mesajlar" to "Bankaya giriş çıkışlarda bu mesajlar gönderilir."
+        set the comments of yaml node "Sifre-Mesajlari" from "SkBank/Mesajlar" to "Şifre ile ilgili olan mesajlar aşağıdadır."
+        save yaml "SkBank/Mesajlar" without extra lines between nodes
+    {_c} is "config":
+        load yaml "plugins/SkBank/config.yml" as "SkBank/config"
+        set the header of "SkBank/config" to "Buradan alım satım işlemleri için kullanılacak parayı ayarlayabilirsiniz."
+        if yaml node "Borsa" in "SkBank/config" doesn't have value:
+            set yaml value "Borsa.Islem-1" in "SkBank/config" to "1000"
+            set yaml value "Borsa.Islem-2" in "SkBank/config" to "5000"
+            set yaml value "Borsa.Islem-3" in "SkBank/config" to "10000"
+            set yaml value "Borsa.Islem-4" in "SkBank/config" to "20000"
+        if yaml node "Modul-Isımleri" in "SkBank/config" doesn't have value:
+            set yaml value "Modul-Isımleri.Ayirici" in "SkBank/config" to "&b» &aBanka &b»"
+            set yaml value "Modul-Isımleri.Bilgiler" in "SkBank/config" to "&b» &aBilgiler &b»"
+            set yaml value "Modul-Isımleri.Cek" in "SkBank/config" to "&b» &aÇek &b»"
+            set yaml value "Modul-Isımleri.Cik" in "SkBank/config" to "&b» &aKapat &b»"
+            set yaml value "Modul-Isımleri.Geri" in "SkBank/config" to "&b» &aGeri Dön &b»"
+            set yaml value "Modul-Isımleri.Islemler" in "SkBank/config" to "&b» &aPara Işlemleri &b»"
+            set yaml value "Modul-Isımleri.Seviye" in "SkBank/config" to "&b» &aSeviye &b»"
+            set yaml value "Modul-Isımleri.Tecrube-Yatir" in "SkBank/config" to "&b» &aTecrübe Yatır &b»"
+            set yaml value "Modul-Isımleri.Yatir" in "SkBank/config" to "&b» &aYatır &b»"
+            set yaml value "Modul-Isımleri.Bankayi-Ac" in "SkBank/config" to "&b» &6Banka: Aç &b»"
+            set yaml value "Modul-Isımleri.Hesap" in "SkBank/config" to "&b» &6Banka: Hesap &b»"
+            set yaml value "Modul-Isımleri.Sifre" in "SkBank/config" to "&b» &6Banka: Şifre &b»"
+            set yaml value "Modul-Isımleri.Yardim" in "SkBank/config" to "&b» &6Banka: Yardım &b»"
+        if yaml node "Sıralama" in "SkBank/config" doesn't have value:
+            set yaml value "Sıralama.Bakiye" in "SkBank/config" to "true"
+            set yaml value "Sıralama.Seviye" in "SkBank/config" to "true"
+        set yaml value "Surum" in "SkBank/config" to "v0.2.3"
+        set the comments of yaml node "Sıralama" from "SkBank/config" to "Nelerin sıralamasına bakılıp bakılamayacağını" and "buradan ayarlayabilirsiniz."
+        set the comments of yaml node "Surum" from "SkBank/config" to "Banka sürümüdür, değiştirmeyin."
+#
+        set {skBank::borsa::siralama::bakiye} to yaml value "Sıralama.Bakiye" in "SkBank/config"
+        set {skBank::borsa::siralama::seviye} to yaml value "Sıralama.Seviye" in "SkBank/config"
+        set {skBank::borsa::islem::1} to yaml value "Borsa.Islem-1" in "SkBank/config"
+        set {skBank::borsa::islem::2} to yaml value "Borsa.Islem-2" in "SkBank/config"
+        set {skBank::borsa::islem::3} to yaml value "Borsa.Islem-3" in "SkBank/config"
+        set {skBank::borsa::islem::4} to yaml value "Borsa.Islem-4" in "SkBank/config"
+#
+        set {skBank::borsa::modul::ayirici} to yaml value "Modul-Isımleri.Ayirici" in "SkBank/config"
+        set {SkBank::borsa::modul::bankayi-ac} to yaml value "Modul-Isımleri.Bankayi-Ac" in "SkBank/config"
+        set {skBank::borsa::modul::bilgiler} to yaml value "Modul-Isımleri.Bilgiler" in "SkBank/config"
+        set {skBank::borsa::modul::cek} to yaml value "Modul-Isımleri.Cek" in "SkBank/config"
+        set {skBank::borsa::modul::cik} to yaml value "Modul-Isımleri.Cik" in "SkBank/config"
+        set {skBank::borsa::modul::geriDon} to yaml value "Modul-Isımleri.Geri" in "SkBank/config"
+        set {SkBank::borsa::modul::hesap} to yaml value "Modul-Isımleri.Hesap" in "SkBank/config"
+        set {skBank::borsa::modul::islemler} to yaml value "Modul-Isımleri.Islemler" in "SkBank/config"
+        set {SkBank::borsa::modul::seviye} to yaml value "Modul-Isımleri.Seviye" in "SkBank/config"
+        set {SkBank::borsa::modul::sifre} to yaml value "Modul-Isımleri.Sifre" in "SkBank/config"
+        set {skBank::borsa::modul::tecrube} to yaml value "Modul-Isımleri.Tecrube-Yatir" in "SkBank/config"
+        set {SkBank::borsa::modul::yardim} to yaml value "Modul-Isımleri.Yardim" in "SkBank/config"
+        set {skBank::borsa::modul::yatir} to yaml value "Modul-Isımleri.Yatir" in "SkBank/config"
+        save yaml "SkBank/config" without extra lines between nodes
+
+function placeholder(convert: text, player: player) :: text:
+    replace all "{prefix}" with "%{prefix}%" in {_convert}
+    replace all "{player}" with "%{_player}%" in {_convert}
+    replace all "{bakiye}" with "%{skBank::bakiye::*}%" in {_convert}
+    replace all "{seviye}" with "%{skBank::seviye::*}%" in {_convert}
+    replace all "{yeni-sira}" with " %nl%" in {_convert}
+    replace all "{tecrube}" with "%{skBank::tecrube::*}%" in {_convert}
+    return {_convert}
+
+on join:
+    {skBank::seviye::%player%} is not set:
+        set {skBank::seviye::%player%} to 1
+        set {skBank::maksBakiye::%player%} to 5000
+    {skBank::bakiye::%player%} > {skBank::maksBakiye::%player%}:
+        set {skBank::bakiye::%player%} to {skBank::maksBakiye::%player%}
+    {skBank::tecrube::%player%} is not set:
+        set {skBank::tecrube::%player%} to 0
+    set {skBank::%player%::kilit} to false
+    if file "plugins/SkBank/playerdata/%player%.yml" doesn't exist:
+        create file "plugins/SkBank/playerdata/%player%.yml"
+        set yaml value "Nickname" of file "plugins/SkBank/playerdata/%player%.yml" to "%player%"
+        set yaml value "Bakiye" of file "plugins/SkBank/playerdata/%player%.yml" to "%{skBank::bakiye::%player%}%"
+        set yaml value "Seviye" of file "plugins/SkBank/playerdata/%player%.yml" to "%{skBank::seviye::%player%}%"
+        set yaml value "Tecrube" of file "plugins/SkBank/playerdata/%player%.yml" to "%{skBank::tecrube::%player%}%"
+        set yaml value "Son-Giris" of file "plugins/SkBank/playerdata/%player%.yml" to "%now%"
+    else:
+        set yaml value "Bakiye" of file "plugins/SkBank/playerdata/%player%.yml" to "%{skBank::bakiye::%player%}%"
+        set yaml value "Seviye" of file "plugins/SkBank/playerdata/%player%.yml" to "%{skBank::seviye::%player%}%"
+        set yaml value "Tecrube" of file "plugins/SkBank/playerdata/%player%.yml" to "%{skBank::tecrube::%player%}%"
+        set yaml value "Son-Giris" of file "plugins/SkBank/playerdata/%player%.yml" to "%now%"
+
+command /banka [<text>] [<text>] [<text>] [<text>]:
+    aliases: bank, skbank
+    trigger:
+        player is online:
+#--------------------------------------------------------------
+            arg-1 is not set:
+                open virtual chest with size 1 named "%{skBank::borsa::modul::yardim}%" to player
+                make gui slot 0 of player with gold nugget named "%{skBank::borsa::modul::bankayi-ac}%" with lore "&b» &7Tıklayarak bankayı aç.||&b||&b» &7Bu işlem için giriş yapmış olmalısın." to run player command "/banka aç"
+                make gui slot 1 of player with tripwire hook named "%{skBank::borsa::modul::sifre}%" with lore "&b» &7Bankaya giriş yapmak için gerekir.||&b||&b» &a/banka &cşifre &eayarla &dşifreniz||&7ile bir şifre belirlersiniz.||&b||&b» &a/banka &cşifre &edeğiştir &deskiŞifre &dyeniŞifre||&7ile eski şifrenizi değiştirirsiniz." to nothing
+                make gui slot 2 of player with diamond named "%{skBank::borsa::modul::hesap}%" with lore "&b» &7Giriş-çıkış için gereken komutlar.||&b||&b» &a/banka &cgiriş &eşifre||&7ile hesabınıza giriş yaparsınız.||&b||&b» &a/banka &cçıkış||&7ile de çıkış yaparsınız." to nothing
+                make gui slot 8 of player with black stained glass pane named "%{skBank::borsa::modul::cik}%" to close
+#--------------------------------------------------------------
+            arg-1 is "şifre":
+                arg-2 is "ayarla":
+                    {skBank::%player%::kilit} is false:
+                        {skBank::%player%::sifre} is not set:
+                            arg-3 is set:
+                                set {skBank::%player%::sifre} to arg-3
+                                send "%{prefix}% %placeholder(yaml value ""Sifre-Mesajlari.Sifre-Ayarlandi"" in ""SkBank/Mesajlar"", executor)%"
+                            else:
+                                send "%{prefix}% %placeholder(yaml value ""Sifre-Mesajlari.Yeni-Sifre-Gir"" in ""SkBank/Mesajlar"", executor)%"
+                        else:
+                            send "%{prefix}% %placeholder(yaml value ""Sifre-Mesajlari.Sifreniz-Var"" in ""SkBank/Mesajlar"", executor)%"
+                    else:
+                        send "%{prefix}% %placeholder(yaml value ""Durum-Mesajlari.Cikis-Yapiniz"" in ""SkBank/Mesajlar"", executor)%"
+                arg-2 is "değiştir":
+                    {skBank::%player%::kilit} is true:
+                        arg-3 is {skBank::%player%::sifre}:
+                            set {skBank::%player%::sifre} to arg-3
+                            set {skBank::%player%::kilit} to false
+                            send "%{prefix}% %placeholder(yaml value ""Sifre-Mesajlari.Sifre-Degistirildi"" in ""SkBank/Mesajlar"", executor)%"
+                        else:
+                            send "%{prefix}% %placeholder(yaml value ""Sifre-Mesajlari.Sifre-Girilmemis-Veya-Hatali"" in ""SkBank/Mesajlar"", executor)%"
+                    else:
+                        send "%{prefix}% %placeholder(yaml value ""Durum-Mesajlari.Giris-Yapiniz"" in ""SkBank/Mesajlar"", executor)%"
+#--------------------------------------------------------------
+            arg-1 is "giriş":
+                {skBank::%player%::kilit} is false:
+                    {skBank::%player%::sifre} is set:
+                        arg-2 is {skBank::%player%::sifre}:
+                            set {skBank::%player%::kilit} to true
+                            send "%{prefix}% %placeholder(yaml value ""Sifre-Mesajlari.Kilit-Acildi"" in ""SkBank/Mesajlar"", executor)%"
+                        else:
+                            send "%{prefix}% %placeholder(yaml value ""Sifre-Mesajlari.Sifre-Girilmemis-Veya-Hatali"" in ""SkBank/Mesajlar"", executor)%"
+                    else:
+                        send "%{prefix}% %placeholder(yaml value ""Sifre-Mesajlari.Sifre-Koyunuz"" in ""SkBank/Mesajlar"", executor)%" 
+                else:
+                    send "%{prefix}% %placeholder(yaml value ""Durum-Mesajlari.Giris-Yapilmis"" in ""SkBank/Mesajlar"", executor)%"
+#--------------------------------------------------------------
+            arg-1 is "çıkış":
+                {skBank::%player%::kilit} is true:
+                    set {skBank::%player%::kilit} to false
+                    send "%{prefix}% %placeholder(yaml value ""Durum-Mesajlari.Cikis-Yapildi"" in ""SkBank/Mesajlar"", executor)%"
+                else:
+                    send "%{prefix}% %placeholder(yaml value ""Durum-Mesajlari.Giris-Yapiniz"" in ""SkBank/Mesajlar"", executor)%"
+#--------------------------------------------------------------
+            arg-1 is "aç":
+                if {skBank::%player%::kilit} is true:
+                    wait 1 tick
+                    open virtual chest with size 1 named "&4Bankam" to player
+                    make gui slot 0 of player with emerald named "%{skBank::borsa::modul::islemler}%" with lore "&6&l+ &7Para yatır veya çek! &6&l+" to run player command "banka islemler"
+                    make gui slot 1 of player with black stained glass pane named "%{skBank::borsa::modul::ayirici}%" to nothing
+                    make gui slot 2 of player with bottle o enchanting named "%{skBank::borsa::modul::tecrube}%" with lore "&6&l+ &7Bankaya tecrübe yatır! &6&l+" to run player command "banka tecrube"
+                    make gui slot 6 of player with gold nugget named "%{skBank::borsa::modul::seviye}%" with lore "&6&l+ &eSeviyeniz: &7%{skBank::seviye::%player%}%||&6&l+ &eMevcut Hazne: &7%{skBank::maksBakiye::%player%}%||&6&l+ &eSıradaki Hazne: &7%{skBank::maksBakiye::%player%} + 5000%||&6&l+ &eGereken Bakiye: &7%{skBank::maksBakiye::%player%} - {skBank::bakiye::%player%}%||&6&l+ &eSeviye atlamak için bakiyeni doldur.||&6&l+ &eSeviye atlatmak için tıkla." to run player command "banka seviye"
+                    make gui slot 7 of player with paper named "%{skBank::borsa::modul::bilgiler}%" with lore "&6&l+ &eBakiyeniz: &7%{skBank::bakiye::%player%}%/%{skBank::maksBakiye::%player%}% TL||&6&l+ &eParanız: &7%player's balance%" to nothing
+                    make gui slot 8 of player with black stained glass pane named "%{skBank::borsa::modul::geriDon}%" to run player command "/banka"
+                else:
+                    send "%{prefix}% %placeholder(yaml value ""Durum-Mesajlari.Giris-Yapiniz"" in ""SkBank/Mesajlar"", executor)%"
+#--------------------------------------------------------------
+            arg-1 is "islemler":
+                if {skBank::%player%::kilit} is true:
+                    wait 1 tick
+                    open virtual chest with size 1 named "%{skBank::borsa::modul::islemler}%" to player
+                    make gui slot 0 of player with emerald named "%{skBank::borsa::modul::yatir}%" with lore "&6&l+ &7%{skBank::borsa::islem::1}%" to run player command "islem yatir 1"
+                    make gui slot 1 of player with emerald named "%{skBank::borsa::modul::yatir}%" with lore "&6&l+ &7%{skBank::borsa::islem::2}%" to run player command "islem yatir 2"
+                    make gui slot 2 of player with emerald named "%{skBank::borsa::modul::yatir}%" with lore "&6&l+ &7%{skBank::borsa::islem::3}%" to run player command "islem yatir 3"
+                    make gui slot 3 of player with emerald named "%{skBank::borsa::modul::yatir}%" with lore "&6&l+ &7%{skBank::borsa::islem::4}%" to run player command "islem yatir 4"
+                    make gui slot 4 of player with black stained glass pane named "%{skBank::borsa::modul::geriDon}%" to run player command "/banka aç"
+                    make gui slot 5 of player with redstone named "%{skBank::borsa::modul::cek}%" with lore "&6&l+ &7%{skBank::borsa::islem::4}%" to run player command "islem cek 4"
+                    make gui slot 6 of player with redstone named "%{skBank::borsa::modul::cek}%" with lore "&6&l+ &7%{skBank::borsa::islem::3}%" to run player command "islem cek 3"
+                    make gui slot 7 of player with redstone named "%{skBank::borsa::modul::cek}%" with lore "&6&l+ &7%{skBank::borsa::islem::2}%" to run player command "islem cek 2"
+                    make gui slot 8 of player with redstone named "%{skBank::borsa::modul::cek}%" with lore "&6&l+ &7%{skBank::borsa::islem::1}%" to run player command "islem cek 1"
+                else:
+                    send "%{prefix}% %placeholder(yaml value ""Durum-Mesajlari.Giris-Yapiniz"" in ""SkBank/Mesajlar"", executor)%"
+#--------------------------------------------------------------
+            arg-1 is "tecrube":
+                if {skBank::%player%::kilit} is true:
+                    wait 1 tick
+                    open virtual chest with size 1 named "%{skBank::borsa::modul::tecrube}%" to player
+                    make gui slot 0 of player with bottle o enchanting named "%{skBank::borsa::modul::yatir}%" with lore "&6&l+ &7500 tecrübe yatır." to close then run player command "banka tecrube yatir"
+                    make gui slot 1 of player with black stained glass pane named "%{skBank::borsa::modul::ayirici}%" to nothing
+                    make gui slot 2 of player with bottle o enchanting named "%{skBank::borsa::modul::cek}%" with lore "&6&l+ &7500 tecrübe çek." to close then run player command "banka tecrube cek"
+                    make gui slot 7 of player with bottle o enchanting named "%{skBank::borsa::modul::tecrube}%" with lore "&6&l+ &eTecrübeniz: &7%player's xp%||&6&l+ &eYatırılmış Tecrübe: &7%{skBank::tecrube::%player%}%" to nothing
+                    make gui slot 8 of player with black stained glass pane named "%{skBank::borsa::modul::geriDon}%" to run player command "banka aç"
+                    arg-2 is "yatir":
+                        player's xp >= 500:
+                            set player's xp to player's xp - 500
+                            add 500 to {skBank::tecrube::%player%}
+                            send "%{prefix}% %placeholder(yaml value ""Islem-Mesajlari.Tecrube-Yatirildi"" in ""SkBank/Mesajlar"", executor)%"
+                        else:
+                            send "%{prefix}% %placeholder(yaml value ""Islem-Mesajlari.Tecrube-Yetersiz"" in ""SkBank/Mesajlar"", executor)%"
+                    arg-2 is "cek":
+                        {skBank::tecrube::%player%} >= 500:
+                            remove 500 from {skBank::tecrube::%player%}
+                            add 500 to player's xp
+                            send "%{prefix}% %placeholder(yaml value ""Islem-Mesajlari.Tecrube-Cekildi"" in ""SkBank/Mesajlar"", executor)%"
+                        else:
+                            send "%{prefix}% %placeholder(yaml value ""Islem-Mesajlari.Tecrube-Yetersiz"" in ""SkBank/Mesajlar"", executor)%"
+                else:
+                    send "%{prefix}% %placeholder(yaml value ""Durum-Mesajlari.Giris-Yapiniz"" in ""SkBank/Mesajlar"", executor)%"
+#--------------------------------------------------------------
+            arg-1 is "seviye":
+                if {skBank::%player%::kilit} is true:
+                    {skBank::bakiye::%player%} = {skBank::maksBakiye::%player%}:
+                        add 1 to {skBank::seviye::%player%}
+                        add 5000 to {skBank::maksBakiye::%player%}
+                        set {skBank::bakiye::%player%} to 0
+                        send "%{prefix}% %placeholder(yaml value ""Islem-Mesajlari.Seviye-Atlandi"" in ""SkBank/Mesajlar"", executor)%"
+                        execute player command "/banka aç"
+                    else:
+                        send "%{prefix}% %placeholder(yaml value ""Islem-Mesajlari.Bakiye-Veya-Para-Yetersiz"" in ""SkBank/Mesajlar"", executor)%"
+                else:
+                    send "%{prefix}% %placeholder(yaml value ""Durum-Mesajlari.Giris-Yapiniz"" in ""SkBank/Mesajlar"", executor)%"
+#--------------------------------------------------------------
+            arg-1 is "sıralama":
+                arg-2 is "Bakiye" or "Seviye":
+                    {skBank::borsa::siralama::%arg-2%} is true:
+                        if {skBank::%arg-2%::%player%} is set:
+                            loop {skBank::%arg-2%::*}:
+                                add 1 to {_size}
+                                if {_low.to.high.list::%loop-value%} is not set:
+                                    set {_low.to.high.list::%loop-value%} to loop-index
+                                else:
+                                    set {_n} to 0
+                                    loop {_size} times:
+                                        set {_n} to {_n}+1
+                                        {_low.to.high.list::%loop-value-1%.%{_n}%} is not set
+                                        set {_low.to.high.list::%loop-value-1%.%{_n}%} to loop-index
+                                        stop loop
+                        wait 1 tick
+                        set {_n} to size of {_low.to.high.list::*}
+                        loop {_low.to.high.list::*}:
+                            set {_high.to.low.list::%{_n}%} to loop-value
+                            set {_n} to {_n}-1
+                        wait 1 tick
+                        set {_i} to 0
+                        send "&8&l------------&8[&6%arg-2% Ilk 10&8]&8&l------------&b"
+                        loop {_high.to.low.list::*}:
+                            add 1 to {_topnumber}
+                            set {_player} to "%loop-value%" parsed as offlineplayer
+                            send "&7%{_topnumber}% - &c%{_player}% %arg-2%si &8» &7%{skBank::%arg-2%::%loop-value%}%"
+                            add 1 to {_i}
+                            if {_topnumber} > 10:
+                                stop
+                        send "&8&l------------&8[&6%arg-2% Ilk 10&8]&8&l------------&b"
+                    else:
+                        send "%{prefix}% %placeholder(yaml value ""Durum-Mesajlari.Siralama-Kapatilmis"" in ""SkBank/Mesajlar"", executor)%"
+                arg-2 is not set:
+                    send "%{prefix}% &e/banka sıralama (Seviye-Bakiye)"
+#--------------------------------------------------------------
+            arg-1 is "bak":
+                arg-2 is set:
+                    send "%{prefix}% %placeholder(yaml value ""Durum-Mesajlari.Oyuncu-Bilgisi"" in ""SkBank/Mesajlar"", executor)%"
+                else:
+                    send "%{prefix}% %placeholder(yaml value ""Durum-Mesajlari.Isim-Girin"" in ""SkBank/Mesajlar"", executor)%"
+#--------------------------------------------------------------
+command /islem [<text>] [<text>]:
+    trigger:
+        if {skBank::%player%::kilit} is true:
+            arg-1 is "yatir":
+                arg-2 is "1" or "2" or "3" or "4":
+                    {skBank::bakiye::%player%} < {skBank::maksBakiye::%player%}:
+                        {skBank::borsa::islem::%arg-2%} + {skBank::bakiye::%player%} <= {skBank::maksBakiye::%player%}:
+                            player's balance >= {skBank::borsa::islem::%arg-2%}:
+                                remove {skBank::borsa::islem::%arg-2%} from player's balance
+                                add {skBank::borsa::islem::%arg-2%} to {skBank::bakiye::%player%}
+                                send "%{prefix}% %placeholder(yaml value ""Islem-Mesajlari.Islem-Basarili"" in ""SkBank/Mesajlar"", executor)%"
+                            player's balance < {skBank::borsa::islem::%arg-2%}:
+                                send "%{prefix}% %placeholder(yaml value ""Islem-Mesajlari.Bakiye-Veya-Para-Yetersiz"" in ""SkBank/Mesajlar"", executor)%"
+                        else:
+                            send "%{prefix}% %placeholder(yaml value ""Islem-Mesajlari.Banka-Dolu"" in ""SkBank/Mesajlar"", executor)%"
+                    else:
+                        send "%{prefix}% %placeholder(yaml value ""Islem-Mesajlari.Banka-Dolu"" in ""SkBank/Mesajlar"", executor)%"
+            arg-1 is "cek":
+                arg-2 is "1" or "2" or "3" or "4":
+                    {skBank::bakiye::%player%} >= {skBank::borsa::islem::%arg-2%}:
+                        remove {skBank::borsa::islem::%arg-2%} from {skBank::bakiye::%player%}
+                        add {skBank::borsa::islem::%arg-2%} to player's balance
+                        send "%{prefix}% %placeholder(yaml value ""Islem-Mesajlari.Islem-Basarili"" in ""SkBank/Mesajlar"", executor)%"
+                    {skBank::bakiye::%player%} < {skBank::borsa::islem::%arg-2%}:
+                        send "%{prefix}% %placeholder(yaml value ""Islem-Mesajlari.Bakiye-Veya-Para-Yetersiz"" in ""SkBank/Mesajlar"", executor)%"
+        else:
+            send "%{prefix}% %placeholder(yaml value ""Durum-Mesajlari.Giris-Yapiniz"" in ""SkBank/Mesajlar"", executor)%"
+#--------------------------------------------------------------
